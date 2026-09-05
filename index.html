@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CivicFix – Smart Community Infrastructure Reporting & Resolution Platform</title>
+    <meta name="description" content="CivicFix connects citizens and authorities to identify, prioritize and resolve public infrastructure problems faster." />
+    <meta property="og:title" content="CivicFix – Smart Community Infrastructure Reporting & Resolution Platform" />
+    <meta property="og:description" content="CivicFix connects citizens and authorities to identify, prioritize and resolve public infrastructure problems faster." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="./civicfix-emblem-transparent.png" />
+    
+    <!-- Global error and Vite websocket connection handler for sandbox environment -->
+    <script>
+      (function() {
+        // 1. Filter console.error and console.warn for benign Vite websocket messages
+        var origConsoleError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var combined = args.map(function(a) {
+            return (a && (a.message || a.stack || a)) || '';
+          }).join(' ');
+
+          if (
+            combined.indexOf('[vite]') !== -1 ||
+            combined.indexOf('failed to connect to websocket') !== -1 ||
+            combined.indexOf('WebSocket closed without opened') !== -1
+          ) {
+            return;
+          }
+          return origConsoleError.apply(console, args);
+        };
+
+        var origConsoleWarn = console.warn;
+        console.warn = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var combined = args.map(function(a) {
+            return (a && (a.message || a.stack || a)) || '';
+          }).join(' ');
+
+          if (
+            combined.indexOf('[vite]') !== -1 ||
+            combined.indexOf('failed to connect to websocket') !== -1 ||
+            combined.indexOf('WebSocket closed without opened') !== -1
+          ) {
+            return;
+          }
+          return origConsoleWarn.apply(console, args);
+        };
+
+        // 2. Catch unhandled rejections and window errors for websocket
+        function isViteWsError(err) {
+          if (!err) return false;
+          var str = (typeof err === 'string' ? err : (err.message || err.reason || err.stack || '')) + '';
+          return (
+            str.indexOf('WebSocket') !== -1 ||
+            str.indexOf('websocket') !== -1 ||
+            str.indexOf('closed without opened') !== -1 ||
+            str.indexOf('[vite]') !== -1 ||
+            str.indexOf('failed to connect to websocket') !== -1 ||
+            str.indexOf('Illegal invocation') !== -1
+          );
+        }
+
+        window.addEventListener('unhandledrejection', function(event) {
+          if (isViteWsError(event.reason)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+          if (isViteWsError(event.message) || isViteWsError(event.error)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+      })();
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

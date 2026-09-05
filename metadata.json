@@ -1,0 +1,6 @@
+{
+  "name": "CivicFix",
+  "description": "CivicFix connects citizens and authorities to identify, prioritize and resolve public infrastructure problems faster.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
