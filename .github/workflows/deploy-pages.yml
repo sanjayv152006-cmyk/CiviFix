@@ -12,13 +12,11 @@ permissions:
 
 concurrency:
   group: 'pages'
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    name: Build Static Site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -27,13 +25,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build static site
+      - name: Build production site
         run: npm run build
 
       - name: Setup Pages
@@ -44,14 +41,23 @@ jobs:
         with:
           path: './dist'
 
-      - name: Deploy to GitHub Pages Action
-        id: deployment
-        uses: actions/deploy-pages@v4
-        continue-on-error: true
-
-      - name: Deploy to gh-pages branch (Dual Support)
+      - name: Push to gh-pages branch (Optional branch sync)
         uses: peaceiris/actions-gh-pages@v4
+        continue-on-error: true
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           force_orphan: true
+
+  deploy:
+    name: Deploy to GitHub Pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
